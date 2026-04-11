@@ -81,7 +81,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'capstone_db',
         'USER': 'postgres',
-        'PASSWORD': '!',
+        'PASSWORD': 'Velocity9495!',
         'HOST' : 'localhost',
         'PORT' : '5432',
 
