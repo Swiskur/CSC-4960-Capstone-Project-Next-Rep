@@ -1,0 +1,64 @@
+body {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+.calendar {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  border: 1px solid #ccc;
+  height: 50%;
+  width: 50%;
+}
+
+.header {
+  display: grid;
+  grid-template-columns: 80px repeat(7, 1fr);
+  background: #f4f4f4;
+  font-weight: bold;
+  text-align: center;
+}
+
+.header div {
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+#calendar-body {
+  display: grid;
+  grid-template-columns: 80px repeat(7, 1fr);
+}
+
+.time-slot {
+  border: 1px solid #eee;
+  height: 50px;
+  position: relative;
+}
+
+.time-label {
+  text-align: center;
+  background: #fafafa;
+  font-size: 12px;
+  line-height: 50px;
+}
+
+.slot {
+  cursor: pointer;
+}
+
+.slot:hover {
+  background: #e0f7fa;
+}
+
+.event {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  right: 2px;
+  bottom: 2px;
+  background: #e65849;
+  color: white;
+  font-size: 12px;
+  padding: 2px;
+  border-radius: 4px;
+}
