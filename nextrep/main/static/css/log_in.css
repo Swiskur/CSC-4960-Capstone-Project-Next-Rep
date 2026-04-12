@@ -1,6 +1,5 @@
 .login-container {
-    background-color:lightgray;
-    border: 10px inset gray;
+    background-color:rgb(231, 231, 231);
     border-radius: 20px; 
     width: 60%;
     padding: 5px;
