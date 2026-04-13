@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title> {{trainer.username}} Availability</title>
+
+    <script>
+        function showBookingForm(slotId){
+            const allForms = document.querySelectorAll('.booking-form');
+            allForms.forEach(form => form.style.display = 'none');
+
+            const selectedForm = document.getElementById('booking-form-' + slotId);
+            if(selectedForm) {
+                selectedForm.style.display = 'block';
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <h2> {{trainer.username}}'s Available Slots</h2>
+
+    <ul>
+        {% for appt in appointments_avail %}
+        <li style="margin-bottom: 25px;">
+            <strong>{{appt.day_of_week}}</strong> - 
+            {{appt.date}}
+            {{appt.start_time}} to {{appt.end_time}}
+
+            <button type="button" onclick="showBookingForm('{{appt.id}}')">Book</button>
+
+            <div id="booking-form-{{appt.id}}" class="booking-form" style="display:none; margin-top:15px;">
+                <form method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="appt_id" value="{{appt.id}}">
+                    {{form.as_p}}
+                    <button type="submit">Submit</button>
+
+                </form>
+            </div>
+        </li>
+        {% empty %}
+        <li> No available Appointments </li>
+        {% endfor %}
+        
+    </ul>
+</body>
+</html>
