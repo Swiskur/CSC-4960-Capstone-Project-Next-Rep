@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title> Athlete Dashboard </title>
+</head>
+
+<body>
+    <h2>Select a Trainer</h2>
+
+    <ul>
+        {% for trainer in trainers %}
+            <li>
+                <a href="{% url 'trainer_open_appointments' trainer.id %}">
+                    {{trainer.username}}
+                </a>
+           </li>
+        {% empty %}
+           <li> No availability</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

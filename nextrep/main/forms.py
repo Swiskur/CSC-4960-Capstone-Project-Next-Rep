@@ -1,15 +1,38 @@
 from django import forms
-from .models import TrainerAvailability
+from .models import TrainerAvailability, Appointment
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserChangeForm
 
 class TrainerAvailabilityForm(forms.ModelForm):
     class Meta:
+
+        #connects to TrainerAvailability model
         model = TrainerAvailability
-        fields = ['date', 'day_of_week', 'start_time', 'end_time']
+
+        #Creates fields from the model that appear in the form
+        fields = ['date', 'start_time', 'end_time']
+
+        #Customizes form UI in HTML
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'start_time': forms.TimeInput(attrs={'type': 'time', 'class': 'form-control'}),
             'end_time': forms.TimeInput(attrs={'type': 'time', 'class': 'form-control'}),
         }
 
+class AppointmentForm(forms.ModelForm):
+    class Meta:
+
+        #Connects to Appointment model in db
+        model = Appointment
+
+        #creates a notes field
+        fields = ['notes']
+
+        #customizes the notes section
+        widgets = {
+            'notes': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 5,
+                'placeholder': 'Add notes such as injured area and syptoms'
+            })
+        }
