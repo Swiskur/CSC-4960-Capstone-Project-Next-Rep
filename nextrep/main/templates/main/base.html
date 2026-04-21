@@ -17,11 +17,12 @@
             <div class="logo">NextRep</div>
 
             <ul class="nav-links" id="navLinks">
-                <li><a href="#">Home</a></li>
-                <li><a href="#">Schedule</a></li>
-                <li><a href="#">About</a></li>
-                <li><a href="#">Contact</a></li>
-            </ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'trainer_avail'%}">Schedule</a></li>
+                <li><a href="{% url 'athlete_dashboard' %}">Dashboard</a></li>
+                <li><a href="{% url 'log_in' %}">Login</a></li>
+                <li><a href="{% url 'sign_up' %}">Sign Up</a></li>
+            </ul>   
 
             <div class="menu-toggle" id="menuToggle">
                 ☰

@@ -48,6 +48,6 @@ class RegistrationForm(UserCreationForm):
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
-        if not email.endswith('@madonna.edu'):
+        if not email.endswith('@my.madonna.edu'):
             raise forms.ValidationError('You must use a Madonna University email address.')
         return email

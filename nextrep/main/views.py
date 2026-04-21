@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import TrainerAvailability, User
+from .models import TrainerAvailability, User, Appointment
 from .forms import TrainerAvailabilityForm, RegistrationForm, AppointmentForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout
@@ -41,8 +41,10 @@ def LogIn(request):
 
 def logout_view(request):
     logout(request)
-    return redirect('login')
+    return redirect('log_in')
 
+def trainer_dashboard(request):
+    return render(request, 'main/trainer_dashboard.html')
 
 def trainer_avail(request):
 
@@ -123,7 +125,7 @@ def trainer_open_appointments(request, trainer_id):
             athlete = User.objects.filter(role='athlete').first()
 
             #Creates an appointment for the athlete from their selection
-            AppointmentForm.objects.create(
+            Appointment.objects.create(
                 athlete=athlete,
                 trainer=trainer,
                 availability=appt,

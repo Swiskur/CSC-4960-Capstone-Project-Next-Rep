@@ -33,13 +33,8 @@ class User(AbstractUser):
 
     )
 
-    #Stores the role of the user
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES)
-
-    #Stores Microsoft ID for login
-    microsoft_id = models.CharField(max_length=255, blank=True, null=True)
-
-    #Stores the athlete's sport
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='athlete')
+    email = models.EmailField(unique=True, validators=[validate_madonna_email])
     sport = models.CharField(max_length=25, choices=SPORT_CHOICES, blank=True)
 
     #Function to only give athletes a sport value
