@@ -1,7 +1,11 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from .models import TrainerAvailability, User, Appointment
-from .forms import TrainerAvailabilityForm, AppointmentForm
+from django.shortcuts import render, redirect
+from .models import TrainerAvailability, User
+from .forms import TrainerAvailabilityForm, RegistrationForm, AppointmentForm
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import login, logout
+from django.shortcuts import get_object_or_404
 from datetime import datetime
+
 
 # Create your views here.
 
@@ -9,10 +13,35 @@ def home(request):
     return render(request, 'main/home.html')
 
 def SignUp(request):
-    return render(request, 'main/sign_up.html')
+    if request.method == 'POST':
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            # Redirect based on role
+            if user.role == 'trainer':
+                return redirect('trainer_dashboard')
+            return redirect('athlete_dashboard')
+    else:
+        form = RegistrationForm()
+    return render(request, 'main/sign_up.html', {'form': form})
 
 def LogIn(request):
-    return render(request, 'main/log_in.html')
+    if request.method == 'POST':
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            if user.role == 'trainer':
+                return redirect('trainer_dashboard')
+            return redirect('athlete_dashboard')
+    else:
+        form = AuthenticationForm()
+    return render(request, 'main/log_in.html', {'form': form})
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')
 
 
 def trainer_avail(request):
@@ -94,7 +123,7 @@ def trainer_open_appointments(request, trainer_id):
             athlete = User.objects.filter(role='athlete').first()
 
             #Creates an appointment for the athlete from their selection
-            Appointment.objects.create(
+            AppointmentForm.objects.create(
                 athlete=athlete,
                 trainer=trainer,
                 availability=appt,

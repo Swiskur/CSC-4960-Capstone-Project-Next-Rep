@@ -9,6 +9,6 @@ urlpatterns = [
     path('trainer-avail/', views.trainer_avail, name='trainer_avail'),
     path('athlete-dashboard/', views.athlete_dashboard, name='athlete_dashboard'),
     path('trainer-open-appointments/<int:trainer_id>/', views.trainer_open_appointments, name='trainer_open_appointments'),
-
+    path('logout/', views.logout_view, name='logout'),
 
 ]

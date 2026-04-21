@@ -1,7 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
 
-# Create your models here.
+def validate_madonna_email(value):
+    if not value.endswith('@my.madonna.edu'):
+        raise ValidationError('You must use a Madonna University email address.')
 
 class User(AbstractUser):
 
@@ -9,8 +12,9 @@ class User(AbstractUser):
     ROLE_CHOICES = (
         ('athlete', 'Athlete'),
         ('trainer', 'Trainer'),
-
     )
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='athlete')
+    email = models.EmailField(unique=True, validators=[validate_madonna_email])
 
     #Athletes select the sport they play based on Madonna sport options
     SPORT_CHOICES = (
