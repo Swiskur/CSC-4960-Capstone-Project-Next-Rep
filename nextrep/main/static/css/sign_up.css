@@ -1,0 +1,20 @@
+.sign_up-container {
+    background-color:rgb(231, 231, 231);
+    border-radius: 20px; 
+    width: 47%;
+    padding: 5px;
+    margin-top: 50px;
+    margin-left: 20px;
+}
+
+h2 {
+    text-decoration: underline;
+    font-size: 30px;
+    font-family:Arial, Helvetica, sans-serif;  
+}
+
+#sign_upForm {
+    font-size: 20px;
+    display: flex;
+    flex-direction: column;
+}

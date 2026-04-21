@@ -1,0 +1,28 @@
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="{% static 'css/sign_up.css' %}">
+    </head>
+<body>
+<div class="sign_up-container">
+    <p id="message"></p>
+    <h2>Sign Up</h2>
+    <form id="sign_upForm">
+        <label for="username">Username:</label>
+        <input type="text" placeholder="Enter Username" id="username" name="username" required>
+        <small class="error-msg" id="usernameError"></small>
+
+        <label for="email">Email:</label>
+        <input type="email" placeholder="Enter Email" id="email" name="email" required>
+        <small class="error-msg" id="usernameError"></small>
+
+        <label for="password">Password:</label>
+        <input type="password" placeholder="Enter Password" id="password" name="password" required>
+        <small class="error-msg" id="usernameError"></small>
+
+        <button type="submit">Sign Up</button>
+        <p>Already have an account, <a href="{% url 'log_in' %}">Login</a></p>
+    </form>
+</div>
+<script src="{% static 'js/sign_up.js' %}"></script>
+</body>
+</html>
