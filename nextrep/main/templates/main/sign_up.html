@@ -1,9 +1,7 @@
+{% extends 'main/base.html' %}
 {% load static %}
-<html>
-    <head>
-        <link rel="stylesheet" type="text/css" href="{% static 'css/sign_up.css' %}">
-    </head>
-<body>
+
+{% block content %}
 <div class="sign_up-container">
 
     {% if messages %}
@@ -38,5 +36,4 @@
         <p>Already have an account? <a href="{% url 'log_in' %}">Login</a></p>
     </form>
 </div>
-</body>
-</html>
+{% endblock %}
