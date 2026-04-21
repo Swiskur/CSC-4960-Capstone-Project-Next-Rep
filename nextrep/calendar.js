@@ -1,41 +1,81 @@
 const calendarBody = document.getElementById("calendar-body");
+const personSelect = document.getElementById("personSelect");
 
-// Hours from 8 AM to 8 PM
-const startHour = 8;
-const endHour = 20;
+const startHour = 9;
+const endHour = 18;
 
-for (let hour = startHour; hour < endHour; hour++) {
-  // Time label column
-  const timeLabel = document.createElement("div");
-  timeLabel.className = "time-slot time-label";
-  timeLabel.textContent = formatHour(hour);
-  calendarBody.appendChild(timeLabel);
+// Store schedules for each person
+const schedules = {
+  john: {},
+  sarah: {},
+  alex: {}
+};
 
-  // 7 days
-  for (let day = 0; day < 7; day++) {
-    const slot = document.createElement("div");
-    slot.className = "time-slot slot";
+// Build calendar grid
+function buildCalendar() {
+  calendarBody.innerHTML = "";
 
-    // Click to add event
-    slot.addEventListener("click", () => {
-      const text = prompt("Enter event:");
-      if (text) {
-        const event = document.createElement("div");
-        event.className = "event";
-        event.textContent = text;
+  for (let hour = startHour; hour < endHour; hour++) {
+    const timeLabel = document.createElement("div");
+    timeLabel.className = "time-slot time-label";
+    timeLabel.textContent = formatHour(hour);
+    calendarBody.appendChild(timeLabel);
 
-        slot.innerHTML = "";
-        slot.appendChild(event);
-      }
-    });
+    for (let day = 0; day < 7; day++) {
+      const slot = document.createElement("div");
+      slot.className = "time-slot slot";
 
-    calendarBody.appendChild(slot);
+      slot.dataset.day = day;
+      slot.dataset.hour = hour;
+
+      // 🔹 CLICK TO ADD EVENT
+      slot.addEventListener("click", () => {
+        const person = personSelect.value;
+        const key = `${day}-${hour}`;
+
+        const text = prompt("Enter event:");
+        if (text) {
+          schedules[person][key] = text;
+          loadSchedule(person);
+        }
+      });
+
+      calendarBody.appendChild(slot);
+    }
   }
 }
 
-// Helper function
+// Load selected person's schedule
+function loadSchedule(person) {
+  const slots = document.querySelectorAll(".slot");
+
+  slots.forEach(slot => {
+    slot.innerHTML = "";
+
+    const key = `${slot.dataset.day}-${slot.dataset.hour}`;
+    const eventText = schedules[person][key];
+
+    if (eventText) {
+      const event = document.createElement("div");
+      event.className = "event";
+      event.textContent = eventText;
+      slot.appendChild(event);
+    }
+  });
+}
+
+// Format time
 function formatHour(hour) {
   const ampm = hour >= 12 ? "PM" : "AM";
   const h = hour % 12 || 12;
   return `${h}:00 ${ampm}`;
 }
+
+// Dropdown change
+personSelect.addEventListener("change", () => {
+  loadSchedule(personSelect.value);
+});
+
+// Init
+buildCalendar();
+loadSchedule(personSelect.value);
