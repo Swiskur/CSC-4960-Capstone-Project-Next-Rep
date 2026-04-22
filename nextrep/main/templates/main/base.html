@@ -18,10 +18,18 @@
 
             <ul class="nav-links" id="navLinks">
                 <li><a href="{% url 'home' %}">Home</a></li>
-                <li><a href="{% url 'trainer_avail'%}">Schedule</a></li>
-                <li><a href="{% url 'athlete_dashboard' %}">Dashboard</a></li>
-                <li><a href="{% url 'log_in' %}">Login</a></li>
-                <li><a href="{% url 'sign_up' %}">Sign Up</a></li>
+                {% if user.is_authenticated %}
+                    {% if user.role == 'trainer' %}
+                        <li><a href="{% url 'trainer_dashboard' %}">Dashboard</a></li>
+                        <li><a href="{% url 'trainer_avail' %}">Schedule</a></li>
+                    {% else %}
+                        <li><a href="{% url 'athlete_dashboard' %}">Dashboard</a></li>
+                    {% endif %}
+                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                {% else %}
+                    <li><a href="{% url 'log_in' %}">Login</a></li>
+                    <li><a href="{% url 'sign_up' %}">Sign Up</a></li>
+                {% endif %}
             </ul>   
 
             <div class="menu-toggle" id="menuToggle">

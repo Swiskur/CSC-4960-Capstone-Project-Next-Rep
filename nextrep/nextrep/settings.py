@@ -46,6 +46,13 @@ INSTALLED_APPS = [
 
 AUTH_USER_MODEL = 'main.User'
 
+AUTHENTICATION_BACKENDS = [
+    'main.auth_backends.EmailOrUsernameModelBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+LOGIN_URL = '/login/'
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

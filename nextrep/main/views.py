@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect
 from .models import TrainerAvailability, User, Appointment
-from .forms import TrainerAvailabilityForm, RegistrationForm, AppointmentForm
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import login, logout
+from .forms import TrainerAvailabilityForm, RegistrationForm, AppointmentForm, LoginForm
+from django.contrib.auth import login, logout, authenticate
 from django.shortcuts import get_object_or_404
 from datetime import datetime
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
@@ -16,8 +17,10 @@ def SignUp(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            login(request, user)
+            user = form.save(commit=False)
+            user.role = 'athlete'
+            user.save()
+            login(request, user, backend='main.auth_backends.EmailOrUsernameModelBackend')
             # Redirect based on role
             if user.role == 'trainer':
                 return redirect('trainer_dashboard')
@@ -28,24 +31,31 @@ def SignUp(request):
 
 def LogIn(request):
     if request.method == 'POST':
-        form = AuthenticationForm(data=request.POST)
+        form = LoginForm(request.POST)
         if form.is_valid():
-            user = form.get_user()
-            login(request, user)
-            if user.role == 'trainer':
-                return redirect('trainer_dashboard')
-            return redirect('athlete_dashboard')
+            email = form.cleaned_data["email"]
+            password = form.cleaned_data["password"]
+            user = authenticate(request, username=email, password=password)
+            if user is None:
+                messages.error(request, "Invalid email or password.")
+            else:
+                login(request, user)
+                if user.role == 'trainer':
+                    return redirect('trainer_dashboard')
+                return redirect('athlete_dashboard')
     else:
-        form = AuthenticationForm()
+        form = LoginForm()
     return render(request, 'main/log_in.html', {'form': form})
 
 def logout_view(request):
     logout(request)
     return redirect('log_in')
 
+@login_required(login_url='log_in')
 def trainer_dashboard(request):
     return render(request, 'main/trainer_dashboard.html')
 
+@login_required(login_url='log_in')
 def trainer_avail(request):
 
     #Temporary trainer made to test functionality
@@ -84,12 +94,14 @@ def trainer_avail(request):
         'options': options,
     })
 
+@login_required(login_url='log_in')
 def athlete_dashboard(request):
     trainers = User.objects.filter(role='trainer')
 
 
     return render(request, 'main/athlete_dashboard.html', {'trainers': trainers,})
 
+@login_required(login_url='log_in')
 def trainer_open_appointments(request, trainer_id):
 
     #Retrieves the trainer selected

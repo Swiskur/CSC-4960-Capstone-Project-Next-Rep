@@ -1,7 +1,6 @@
 from django import forms
 from .models import TrainerAvailability, Appointment
-from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserChangeForm, UserCreationForm
+from django.contrib.auth.forms import UserCreationForm
 from .models import User
 
 class TrainerAvailabilityForm(forms.ModelForm):
@@ -40,14 +39,19 @@ class AppointmentForm(forms.ModelForm):
 
 class RegistrationForm(UserCreationForm):
     email = forms.EmailField(required=True)
-    role = forms.ChoiceField(choices=User.ROLE_CHOICES)
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'role', 'password1', 'password2']
+        fields = ['username', 'email', 'password1', 'password2']
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
-        if not email.endswith('@my.madonna.edu'):
+        email_lower = (email or '').lower()
+        if not (email_lower.endswith('@madonna.edu') or email_lower.endswith('@my.madonna.edu')):
             raise forms.ValidationError('You must use a Madonna University email address.')
         return email
+
+
+class LoginForm(forms.Form):
+    email = forms.EmailField()
+    password = forms.CharField(widget=forms.PasswordInput)
