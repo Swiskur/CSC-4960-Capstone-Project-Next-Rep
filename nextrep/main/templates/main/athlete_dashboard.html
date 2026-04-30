@@ -4,6 +4,7 @@
 {% block head %}
     {{ block.super }}
     <title>Athlete Dashboard</title>
+    <link rel="stylesheet" type="text/css" href=" {% static 'css/calendar.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -40,7 +41,7 @@
     <div id="calendar-body"></div>
   </div>
 
-  <script src="calendar.js"></script>
+  <script src=" {% static 'js/calendar.js' %}"></script>
   <script>
     function goToTrainerPage(){
         const selectedUrl = document.getElementById("personSelect").value;
