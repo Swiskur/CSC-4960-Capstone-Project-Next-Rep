@@ -6,6 +6,8 @@ from django.shortcuts import get_object_or_404
 from datetime import datetime
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+from django.db.models import Q
 
 
 # Create your views here.
@@ -84,9 +86,16 @@ def trainer_avail(request):
 
         #If the form is a GET request it creates a form
         form = TrainerAvailabilityForm()
+    now = timezone.localtime()
+    today = now.date()
+    current_time = now.time()
 
-    #All available options for the specific trainer
-    options = TrainerAvailability.objects.filter(trainer=trainer)
+    options = TrainerAvailability.objects.filter(
+        trainer=trainer
+    ).filter(
+        Q(date__gt=today) | Q(date=today, end_time__gte=current_time)
+    ).order_by('date', 'start_time')
+
 
     #Renders the trainer_availability page as well as the form and options
     return render(request, 'main/trainer_availability.html',{
@@ -98,8 +107,15 @@ def trainer_avail(request):
 def athlete_dashboard(request):
     trainers = User.objects.filter(role='trainer')
 
+    athlete = User.objects.filter(role='athlete').first()
 
-    return render(request, 'main/athlete_dashboard.html', {'trainers': trainers,})
+    appointments = Appointment.objects.filter(
+        athlete=athlete,
+        end_time__gte=timezone.now()
+    ).order_by('start_time')
+
+
+    return render(request, 'main/athlete_dashboard.html', {'trainers': trainers, 'appointments': appointments})
 
 @login_required(login_url='log_in')
 def trainer_open_appointments(request, trainer_id):
@@ -107,10 +123,16 @@ def trainer_open_appointments(request, trainer_id):
     #Retrieves the trainer selected
     trainer = get_object_or_404(User, id=trainer_id, role='trainer')
 
+    now = timezone.localtime()
+    today = now.date()
+    current_time = now.time()
+
     #Available appointments for the trainer
     appointments_avail = TrainerAvailability.objects.filter(
         trainer=trainer,
         is_booked=False
+    ).filter(
+        Q(date__gt=today) | Q(date=today, end_time__gte=current_time)
     ).order_by('date', 'start_time')
 
     #Creates an appointment form
@@ -159,4 +181,8 @@ def trainer_open_appointments(request, trainer_id):
         'appointments_avail': appointments_avail,
         'form': form,
     })
+
+def calendar(request):
+    return render(request, 'main/calendar.html')
+
         
