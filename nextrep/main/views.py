@@ -55,13 +55,20 @@ def logout_view(request):
 
 @login_required(login_url='log_in')
 def trainer_dashboard(request):
+    #If an athlete tries accessing then it will redirct them to the athlete dashbaord
+    if request.user.role != 'trainer':
+        return redirect('athlete_dashboard')
     return render(request, 'main/trainer_dashboard.html')
 
 @login_required(login_url='log_in')
 def trainer_avail(request):
 
-    #Temporary trainer made to test functionality
-    trainer = User.objects.filter(role='trainer').first()
+    #If an athlete tries accessing then it will redirct them to the athlete dashbaord
+    if request.user.role != 'trainer':
+        return redirect('athlete_dashboard')
+
+    #Trainer user
+    trainer = request.user
 
     #If POST request is made
     if request.method == 'POST':
@@ -105,21 +112,27 @@ def trainer_avail(request):
 
 @login_required(login_url='log_in')
 def athlete_dashboard(request):
-    trainers = User.objects.filter(role='trainer')
-
-    athlete = User.objects.filter(role='athlete').first()
-
-    appointments = Appointment.objects.filter(
+   
+   
+   #Restricts access to athletes only
+   if request.user.role != 'athlete':
+       return redirect('trainer_dashboard')
+   
+   trainers = User.objects.filter(role='trainer')
+   athlete = request.user
+   appointments = Appointment.objects.filter(
         athlete=athlete,
         end_time__gte=timezone.now()
     ).order_by('start_time')
-
-
-    return render(request, 'main/athlete_dashboard.html', {'trainers': trainers, 'appointments': appointments})
+   return render(request, 'main/athlete_dashboard.html', {'trainers': trainers, 'appointments': appointments})
 
 @login_required(login_url='log_in')
 def trainer_open_appointments(request, trainer_id):
 
+    #Restricts access to Athletes only
+    if request.user.role != 'athlete':
+       return redirect('trainer_dashboard')
+   
     #Retrieves the trainer selected
     trainer = get_object_or_404(User, id=trainer_id, role='trainer')
 
@@ -155,8 +168,8 @@ def trainer_open_appointments(request, trainer_id):
         #If the form is valid
         if form.is_valid():
 
-            #Creates a temporary athlete for testing
-            athlete = User.objects.filter(role='athlete').first()
+            #Athlete user
+            athlete = request.user
 
             #Creates an appointment for the athlete from their selection
             Appointment.objects.create(
