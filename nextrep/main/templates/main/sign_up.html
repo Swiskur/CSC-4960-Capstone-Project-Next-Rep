@@ -18,22 +18,26 @@
         <input type="text" placeholder="Enter Username" id="username" name="username" 
                value="{{ form.username.value|default:'' }}" required>
         <small class="error-msg">{{ form.username.errors }}</small>
-
+        <br>
+        <br>
         <label for="email">Email:</label>
         <input type="email" placeholder="Enter Madonna Email (@madonna.edu or @my.madonna.edu)" id="email" name="email" 
                value="{{ form.email.value|default:'' }}" required>
         <small class="error-msg">{{ form.email.errors }}</small>
-
+        <br>
+        <br>
         <label for="password1">Password:</label>
         <input type="password" placeholder="Enter Password" id="password1" name="password1" required>
         <small class="error-msg">{{ form.password1.errors }}</small>
-
+        <br>
+        <br>
         <label for="password2">Confirm Password:</label>
         <input type="password" placeholder="Confirm Password" id="password2" name="password2" required>
         <small class="error-msg">{{ form.password2.errors }}</small>
-
+        <br>
+        <br>
         <button type="submit">Sign Up</button>
-        <p>Already have an account? <a href="{% url 'log_in' %}">Login</a></p>
+        <p>Already have an account? <a href="{% url 'log_in' %}" style="color:#4caf50;">Login</a></p>
     </form>
 </div>
 {% endblock %}

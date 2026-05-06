@@ -3,10 +3,10 @@
 
 {% block content %}
     <form method="POST" action="{% url 'log_in' %}" id="loginForm">
-        <h2>Login</h2>
 
         {% csrf_token %}
         <div class="login-container">
+            <h2>Login</h2>
             {% if messages %}
                 {% for message in messages %}
                     <p style="color: red;">{{ message }}</p>
@@ -20,8 +20,9 @@
             <input type="password" placeholder="Enter Password" name="password" id="passwordField" required>
             <input type="checkbox" id="togglePassword">Show Password
             <br>
+            <br>
             <button type="submit">Login</button>
-            <p> Not Registered, <a href="{% url 'sign_up' %}">Sign Up</a></p>
+            <p> Not Registered, <a href="{% url 'sign_up' %}" style="color:#4caf50;">Sign Up</a></p>
         </div>
     </form>
 <script src="{% static 'js/log_in.js' %}"></script>
