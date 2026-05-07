@@ -6,10 +6,13 @@ from .models import User, Appointment, TrainerAvailability
 @admin.register(User)
 class UserAdmin(DjangoUserAdmin):
     fieldsets = DjangoUserAdmin.fieldsets + (
-        ("NextRep", {"fields": ("role", "sport", "microsoft_id")}),
+        ("NextRep", {"fields": ("role", "sport")}),
     )
-    list_display = ("username", "email", "role", "is_staff", "is_superuser")
-    list_filter = ("role", "is_staff", "is_superuser", "is_active")
+    add_fieldsets = DjangoUserAdmin.add_fieldsets + (
+        ("NextRep", {"fields": ("email","role","sport")}),
+    )
+    list_display = ("username", "email", "role", "sport", "is_staff", "is_superuser")
+    list_filter = ("role", "sport", "is_staff", "is_superuser", "is_active")
 
     def get_readonly_fields(self, request, obj=None):
         ro = list(super().get_readonly_fields(request, obj))
