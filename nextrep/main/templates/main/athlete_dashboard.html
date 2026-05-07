@@ -4,20 +4,75 @@
 {% block head %}
     {{ block.super }}
     <title>Athlete Dashboard</title>
+    <link rel="stylesheet" type="text/css" href=" {% static 'css/calendar.css' %}">
 {% endblock %}
 
 {% block content %}
-    <h2>Select a Trainer</h2>
-
-    <ul>
+<div class="controls">
+    <label for="personSelect">Select a Trainer</label>
+    <select id="personSelect" onchange="goToTrainerPage()">
+        <option value="">Choost a Trainer</option>
+    
         {% for trainer in trainers %}
-            <li>
-                <a href="{% url 'trainer_open_appointments' trainer.id %}">
+            
+            <option value="{% url 'trainer_open_appointments' trainer.id %}">
                     {{ trainer.username }}
-                </a>
-           </li>
-        {% empty %}
-           <li>No availability</li>
-        {% endfor %}
-    </ul>
+            </option>
+            
+           
+    {% empty %}
+           <option value="">No availability</option>
+    {% endfor %}
+    </select>
+</div>
+
+<div class="calendar">
+    <div class="header">
+      <div>Time</div>
+      <div>Mon</div>
+      <div>Tue</div>
+      <div>Wed</div>
+      <div>Thu</div>
+      <div>Fri</div>
+      <div>Sat</div>
+      <div>Sun</div>
+    </div>
+
+    <div id="calendar-body"></div>
+  </div>
+
+  <script src=" {% static 'js/calendar.js' %}"></script>
+  <script>
+    function goToTrainerPage(){
+        const selectedUrl = document.getElementById("personSelect").value;
+        if(selectedUrl){
+            window.location.href = selectedUrl;
+
+        }
+
+    }
+  </script>
+
+  <h2> Your Upcoming Appointments</h2>
+
+  <ul>
+    {%for appointment in appointments %}
+    <li>
+        Trainer - {{ appointment.trainer.username }}
+        <br>
+        {{appointment.start_time}} to {{appointment.end_time}}
+        <br>
+        Status - {{ appointment.status }}
+        Notes - {{ appointment.notes }}
+
+    </li>
+    {% empty %}
+        <li>
+            No Scheduled Appointments.
+        </li>
+    {% endfor %}
+  </ul>
 {% endblock %}
+</body>
+
+</html>

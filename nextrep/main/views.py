@@ -6,6 +6,9 @@ from django.shortcuts import get_object_or_404
 from datetime import datetime
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+from django.db.models import Q
+from django.core.mail import send_mail
 
 
 # Create your views here.
@@ -53,13 +56,20 @@ def logout_view(request):
 
 @login_required(login_url='log_in')
 def trainer_dashboard(request):
+    #If an athlete tries accessing then it will redirct them to the athlete dashbaord
+    if request.user.role != 'trainer':
+        return redirect('athlete_dashboard')
     return render(request, 'main/trainer_dashboard.html')
 
 @login_required(login_url='log_in')
 def trainer_avail(request):
 
-    #Temporary trainer made to test functionality
-    trainer = User.objects.filter(role='trainer').first()
+    #If an athlete tries accessing then it will redirct them to the athlete dashbaord
+    if request.user.role != 'trainer':
+        return redirect('athlete_dashboard')
+
+    #Trainer user
+    trainer = request.user
 
     #If POST request is made
     if request.method == 'POST':
@@ -84,9 +94,16 @@ def trainer_avail(request):
 
         #If the form is a GET request it creates a form
         form = TrainerAvailabilityForm()
+    now = timezone.localtime()
+    today = now.date()
+    current_time = now.time()
 
-    #All available options for the specific trainer
-    options = TrainerAvailability.objects.filter(trainer=trainer)
+    options = TrainerAvailability.objects.filter(
+        trainer=trainer
+    ).filter(
+        Q(date__gt=today) | Q(date=today, end_time__gte=current_time)
+    ).order_by('date', 'start_time')
+
 
     #Renders the trainer_availability page as well as the form and options
     return render(request, 'main/trainer_availability.html',{
@@ -96,21 +113,40 @@ def trainer_avail(request):
 
 @login_required(login_url='log_in')
 def athlete_dashboard(request):
-    trainers = User.objects.filter(role='trainer')
-
-
-    return render(request, 'main/athlete_dashboard.html', {'trainers': trainers,})
+   
+   
+   #Restricts access to athletes only
+   if request.user.role != 'athlete':
+       return redirect('trainer_dashboard')
+   
+   trainers = User.objects.filter(role='trainer')
+   athlete = request.user
+   appointments = Appointment.objects.filter(
+        athlete=athlete,
+        end_time__gte=timezone.now()
+    ).order_by('start_time')
+   return render(request, 'main/athlete_dashboard.html', {'trainers': trainers, 'appointments': appointments})
 
 @login_required(login_url='log_in')
 def trainer_open_appointments(request, trainer_id):
 
+    #Restricts access to Athletes only
+    if request.user.role != 'athlete':
+       return redirect('trainer_dashboard')
+   
     #Retrieves the trainer selected
     trainer = get_object_or_404(User, id=trainer_id, role='trainer')
+
+    now = timezone.localtime()
+    today = now.date()
+    current_time = now.time()
 
     #Available appointments for the trainer
     appointments_avail = TrainerAvailability.objects.filter(
         trainer=trainer,
         is_booked=False
+    ).filter(
+        Q(date__gt=today) | Q(date=today, end_time__gte=current_time)
     ).order_by('date', 'start_time')
 
     #Creates an appointment form
@@ -133,11 +169,11 @@ def trainer_open_appointments(request, trainer_id):
         #If the form is valid
         if form.is_valid():
 
-            #Creates a temporary athlete for testing
-            athlete = User.objects.filter(role='athlete').first()
+            #Athlete user
+            athlete = request.user
 
             #Creates an appointment for the athlete from their selection
-            Appointment.objects.create(
+            appointment = Appointment.objects.create(
                 athlete=athlete,
                 trainer=trainer,
                 availability=appt,
@@ -145,13 +181,41 @@ def trainer_open_appointments(request, trainer_id):
                 end_time=datetime.combine(appt.date, appt.end_time),
                 notes=form.cleaned_data['notes'],
             )
+            
+            #Adds email Subject
+            subject = 'NextRep Appointment Booked'
+
+            #Creates a standard email message with appointment information
+            message = (
+                f"Appointment Successfully Booked.\n\n"
+                f"{appointment.athlete.username} with {appointment.trainer.username}\n"
+                f"On {appointment.start_time.strftime('%A, %B, %d, %Y')}\n"
+                f"From {appointment.start_time.strftime('%I: %M %p')} - {appointment.end_time.strftime('%I: %M %p')}\n"
+                f"Notes: {appointment.notes or 'No notes.'}"   
+            )
+
+            #Recipients for the email
+            recipient_list = [
+                appointment.athlete.email,
+                appointment.trainer.email,
+            ]
+
+            #Sends the email
+            send_mail(
+                subject,
+                message,
+                None,
+                recipient_list,
+                fail_silently=False
+
+            )
 
             #The appointment is booked
             appt.is_booked = True
             appt.save()
 
             #Redirects user to the trainer's open appointments page
-            return redirect('trainer_open_appointments', trainer_id=trainer.id)
+            return redirect('athlete_dashboard')
         
     #Renders page with the trainers available information and form
     return render(request, 'main/available_appointments.html', {
@@ -159,4 +223,8 @@ def trainer_open_appointments(request, trainer_id):
         'appointments_avail': appointments_avail,
         'form': form,
     })
+
+def calendar(request):
+    return render(request, 'main/calendar.html')
+
         

@@ -11,5 +11,6 @@ urlpatterns = [
     path('trainer-dashboard/', views.trainer_dashboard, name='trainer_dashboard'),
     path('trainer-open-appointments/<int:trainer_id>/', views.trainer_open_appointments, name='trainer_open_appointments'),
     path('logout/', views.logout_view, name='logout'),
+    path('calendar/', views.calendar, name='calendar')
 
 ]
