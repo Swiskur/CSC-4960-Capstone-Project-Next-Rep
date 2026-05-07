@@ -12,7 +12,7 @@
     <label for="personSelect">Select a Trainer</label>
     <select id="personSelect" onchange="goToTrainerPage()">
         <option value="">Choost a Trainer</option>
-    <ul>
+    
         {% for trainer in trainers %}
             
             <option value="{% url 'trainer_open_appointments' trainer.id %}">

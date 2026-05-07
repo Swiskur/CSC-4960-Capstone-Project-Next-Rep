@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.db.models import Q
+from django.core.mail import send_mail
 
 
 # Create your views here.
@@ -172,7 +173,7 @@ def trainer_open_appointments(request, trainer_id):
             athlete = request.user
 
             #Creates an appointment for the athlete from their selection
-            Appointment.objects.create(
+            appointment = Appointment.objects.create(
                 athlete=athlete,
                 trainer=trainer,
                 availability=appt,
@@ -180,13 +181,41 @@ def trainer_open_appointments(request, trainer_id):
                 end_time=datetime.combine(appt.date, appt.end_time),
                 notes=form.cleaned_data['notes'],
             )
+            
+            #Adds email Subject
+            subject = 'NextRep Appointment Booked'
+
+            #Creates a standard email message with appointment information
+            message = (
+                f"Appointment Successfully Booked.\n\n"
+                f"{appointment.athlete.username} with {appointment.trainer.username}\n"
+                f"On {appointment.start_time.strftime('%A, %B, %d, %Y')}\n"
+                f"From {appointment.start_time.strftime('%I: %M %p')} - {appointment.end_time.strftime('%I: %M %p')}\n"
+                f"Notes: {appointment.notes or 'No notes.'}"   
+            )
+
+            #Recipients for the email
+            recipient_list = [
+                appointment.athlete.email,
+                appointment.trainer.email,
+            ]
+
+            #Sends the email
+            send_mail(
+                subject,
+                message,
+                None,
+                recipient_list,
+                fail_silently=False
+
+            )
 
             #The appointment is booked
             appt.is_booked = True
             appt.save()
 
             #Redirects user to the trainer's open appointments page
-            return redirect('trainer_open_appointments', trainer_id=trainer.id)
+            return redirect('athlete_dashboard')
         
     #Renders page with the trainers available information and form
     return render(request, 'main/available_appointments.html', {
