@@ -59,7 +59,13 @@ def trainer_dashboard(request):
     #If an athlete tries accessing then it will redirct them to the athlete dashbaord
     if request.user.role != 'trainer':
         return redirect('athlete_dashboard')
-    return render(request, 'main/trainer_dashboard.html')
+    
+    appointments = Appointment.objects.filter(
+        trainer=request.user,
+        end_time__gte=timezone.now()
+
+    ).exclude(status='canceled').order_by('start_time')
+    return render(request, 'main/trainer_dashboard.html', {'appointments': appointments,})
 
 @login_required(login_url='log_in')
 def trainer_avail(request):
@@ -124,7 +130,7 @@ def athlete_dashboard(request):
    appointments = Appointment.objects.filter(
         athlete=athlete,
         end_time__gte=timezone.now()
-    ).order_by('start_time')
+    ).exclude(status='canceled').order_by('start_time')
    return render(request, 'main/athlete_dashboard.html', {'trainers': trainers, 'appointments': appointments})
 
 @login_required(login_url='log_in')
@@ -224,6 +230,33 @@ def trainer_open_appointments(request, trainer_id):
         'form': form,
     })
 
+#Canceled Function
+@login_required(login_url='login')
+def cancel_appointment(request, appointment_id):
+
+    #Retrieves the appointment
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+
+    #User restrictions for athletes and trainers only
+    if request.user != appointment.athlete and request.user != appointment.trainer:
+        return redirect('home')
+
+
+    #Changing appointment status to canceled
+    appointment.status = 'canceled'
+    appointment.save()
+
+    #Making canceled appointments available again
+    if appointment.availability:
+        appointment.availability.is_booked = False
+        appointment.availability.save()
+    
+    #Redirecting users to their dashboards
+    if request.user.role == 'trainer':
+        return redirect('trainer_dashboard')
+    if request.user.role == 'athlete':
+        return redirect('athlete_dashboard')
+    
 def calendar(request):
     return render(request, 'main/calendar.html')
 

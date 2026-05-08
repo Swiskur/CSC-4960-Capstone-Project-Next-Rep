@@ -4,8 +4,33 @@
 {% block head %}
     {{ block.super }}
     <title>Trainer Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/calendar.css' %}">
 {% endblock %}
 
 {% block content %}
     <h2>Trainer Dashboard</h2>
+
+  <h2> Your Upcoming Appointments</h2>
+
+  <ul>
+    {%for appointment in appointments %}
+    <li>
+        Athlete - {{ appointment.athlete.username }}
+        <br>
+        {{appointment.start_time}} to {{appointment.end_time}}
+        <br>
+        Status - {{ appointment.status }}
+        Notes - {{ appointment.notes }}
+        <br>
+        <form method="POST" action="{% url 'cancel_appointment' appointment.id %}">
+            {% csrf_token %}
+            <button type="submit">Cancel Appointment</button>
+        </form>
+    </li>
+    {% empty %}
+        <li>
+            No Scheduled Appointments.
+        </li>
+    {% endfor %}
+  </ul>
 {% endblock %}

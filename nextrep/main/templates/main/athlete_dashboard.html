@@ -64,6 +64,12 @@
         <br>
         Status - {{ appointment.status }}
         Notes - {{ appointment.notes }}
+        <br>
+        <form method="POST" action="{% url 'cancel_appointment' appointment.id %}">
+            {% csrf_token %}
+            <button type="submit">Cancel Appointment</button>
+        </form>
+
 
     </li>
     {% empty %}
