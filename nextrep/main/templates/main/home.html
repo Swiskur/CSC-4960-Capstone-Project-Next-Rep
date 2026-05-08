@@ -2,18 +2,90 @@
 {% load static %}
 
 {% block content %}
-<h1>Welcome to NextRep</h1>
+<style>
+    footer{
+        text-align: right;
+        margin-top: 180px;
+        padding: 20px;
+  
+    }
+    .intro{
+  text-align: center;
+  margin-top: 40px auto;
+  padding: 50px;
+  max-width: 800px;
+  border-radius: 20px;
+  background-color: aliceblue;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 1);
+}
 
+.how-to{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 10px;
+  margin-top: 40px;
+}
 
-<ul>
-    <li>
-Create an account using your Madonna
-    </li>
-    <li>
+.step{
+  padding: 20px;
+  border-radius: 10px;
+  background-color: aliceblue;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 1);
+}
 
-    </li>
-    <li>
+.trainer{
+  text-align: center;
+  margin-top: 30px;
+}
+</style>
+<div class="intro">
+    <h1>Welcome to NextRep</h1>
 
-    </li>
-</ul>
+    <h2>Scheduling Made Simple</h2>
+
+    <p>
+        Next-Rep is utilized to help Madonna University athletes 
+        connect with their athletic trainers to book appointments seamlessly.
+    </p>
+</div>
+
+<div class="how-to">
+    <div class="step">
+        <h3>Create an account </h3>
+        <p>Register using your Madonna University Outlook Email</p>
+    </div>
+
+    <div class="step">
+        <h3>Athlete Dashboard</h3>
+        <p>View your dashboard to see your upcoming appointments and calendar</p>
+    </div>
+
+    <div class="step">
+        <h3>Select a Trainer</h3>
+        <p>Select the drop down menu on the dashboard to view available trainers</p>
+    </div>
+
+    <div class="step">
+        <h3>Trainer Availability</h3>
+        <p>After selecting a trainer, it will take you to their availability page</p>
+    </div>
+
+    <div class="step">
+        <h3>Booking</h3>
+        <p>Book an appointment, and provide notes describing the treamnent you need</p>
+    </div>
+
+    <div class="step">
+        <h3>Email Confirmation</h3>
+        <p>You will recieve an email confirmation for your appointment</p>
+    </div>
+
+</div>
+
+<h3>New Trainer?</h3>
+<p>Contact Madonna Athletic Department to create an account</p>
+
+<footer>
+    <p>2026 Next-Rep | Madonna University CSC Capstone Project</p>
+</footer>
 {% endblock %}
